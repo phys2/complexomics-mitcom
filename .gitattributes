@@ -1,0 +1,3 @@
+# due to the size of output (!) cells in the notebook file, 
+# GitHub reports ~99% of code as "language" Jupyter, so better ignore it
+mitcom/notebooks/MitCOM.ipynb linguist-vendored
