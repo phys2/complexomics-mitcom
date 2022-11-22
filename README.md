@@ -3,6 +3,8 @@
 This package contain supplementary code for the 
 [MitCOM](https://www.complexomics.org/datasets/mitcom) publication.
 
+[![DOI](https://zenodo.org/badge/540069120.svg)](https://zenodo.org/badge/latestdoi/540069120)
+
 ## Content
 
 ### Package
