@@ -576,12 +576,18 @@ def run(
     elif nprot == 1:
         n_jobs = 1
 
+    if n_jobs == 0:
+        n_jobs = 1
+    elif n_jobs < 0:
+        # adjust worker count to joblib style
+        n_jobs -= 1
+
     func_process = partial(
         process_protein,
         plotdir=plotdir,
         tick_labels=xtick_labels,
         tick_locations=xtick_locations,
-        quiet=True if n_jobs > 1 else quiet,
+        quiet=True if n_jobs != 1 else quiet,
     )
 
     # for easier debugging, skip joblib entirely for n_jobs == 1
@@ -590,9 +596,6 @@ def run(
             func_process(protein=p, profile=df.loc[p].to_numpy()) for p in proteins
         )
     else:
-        # adjust worker count to joblib style
-        if n_jobs < 0:
-            n_jobs -= 1
         # in multiprocessing mode, leave progress reporting to joblib
         verbose = 0 if quiet else 10
         results_gen = joblib.Parallel(n_jobs=n_jobs, verbose=verbose)(
