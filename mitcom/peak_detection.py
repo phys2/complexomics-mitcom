@@ -55,22 +55,26 @@ class InformationCriteria:
         self.bic = bic
 
 
-def mw2strip(x: float | Vector, xp: Vector, fp: Vector):
-    """Convert molecular weight scale to strip scale"""
+def _interpolate(x: float | Vector, xp: Vector, fp: Vector):
     # sample points must be monotonically increasing
     _xp = xp
+    _fp = fp
     if _xp[0] > _xp[-1]:
         _xp = _xp[::-1]
-    if not np.all(np.diff(xp) > 0):
+        _fp = _fp[::-1]
+    if not np.all(np.diff(_xp) > 0):
         raise ValueError("Interpolation x-values must be monotonically increasing")
-    return np.interp(x, _xp, fp)
+    return np.interp(x, _xp, _fp)
+
+
+def mw2strip(x: float | Vector, xp: Vector, fp: Vector):
+    """Convert molecular weight scale to strip scale"""
+    return _interpolate(x, xp, fp)
 
 
 def strip2mw(x: float | Vector, xp: Vector, fp: Vector):
     """Convert strip scale to molecular weight scale"""
-    if not np.all(np.diff(xp) > 0):
-        raise ValueError("Interpolation x-values must be monotonically increasing")
-    return np.interp(x, xp, fp)
+    return _interpolate(x, xp, fp)
 
 
 def detect_peaks(
@@ -532,7 +536,7 @@ def run(
     x_strip = list(range(1, len(df.columns) + 1))
 
     # set locations and labels of plot ticks
-    func_strip2mw = partial(strip2mw, xp=x_mw, fp=x_strip)
+    func_strip2mw = partial(strip2mw, xp=x_strip, fp=x_mw)
     if tick_locations is None:
         # auto mode: 7 ticks
         d = x_strip[-1] // 6
@@ -540,7 +544,11 @@ def run(
         xtick_labels = list(func_strip2mw(xtick_locations))
     else:
         # silently drop invalid MW values
-        tick_locations = [x for x in tick_locations if x_mw[0] <= x <= x_mw[-1]]
+        tick_locations = [
+            x
+            for x in tick_locations
+            if x_mw[0] <= x <= x_mw[-1] or x_mw[0] >= x >= x_mw[-1]
+        ]
         # calculate tick x locations from provided MW values
         xtick_labels = [str(x) for x in tick_locations]
         xtick_locations = list(mw2strip(tick_locations, x_mw, x_strip))
