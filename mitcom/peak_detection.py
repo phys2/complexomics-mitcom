@@ -341,6 +341,9 @@ def _process_protein_impl(
     model, params = build_model(profile, peaks)
     result = model.fit(profile, params, x=x, weights=weights)
 
+    latest_result = result
+    latest_peaks = peaks
+
     # add more peaks if needed
     while len(peaks) < 12:
         # area above 'best fit' line
@@ -390,15 +393,16 @@ def _process_protein_impl(
 
         # add additional peak
         # print("Adding additional peak at", best_new_peak_index)
-        new_peaks = np.append(peaks, best_new_peak_index)
+        peaks = np.append(peaks, best_new_peak_index)
         model, params = build_model(profile, peaks)
-        new_result = model.fit(profile, params, x=x, weights=weights)
+        result = model.fit(profile, params, x=x, weights=weights)
 
-        if not new_result.success:
-            break
+        if result.success:
+            latest_result = result
+            latest_peaks = peaks
 
-        result = new_result
-        peaks = new_peaks
+    result = latest_result
+    peaks = latest_peaks
 
     if not result.success:
         raise ValueError(f"Fit aborted: {result.message}")
