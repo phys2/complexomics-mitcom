@@ -10,20 +10,16 @@ This package contain supplementary code for the
 ### Package
 
 The `mitcom` package contains all relevant methods for handling protein profiles
-and single components: from detection over correlation to distance matrix and
-similarity calculation.
-
-### Notebook
-
-The `MitCOM.ipynb` notebook makes use of these methods and shows the
-way from data import to t-SNE output. It requires the `mitcom` package to be
-installed/available.
+and single profile components: from component detection and correlation to
+similarity distance matrix calculation.
 
 ### Peak detection script
 
-For detecting peaks in protein profile data, the package makes the 
-`complex_find_peaks` script available upon installation. 
-It reads two tab-separated input files (tsv) with the following structure:
+The `complex_find_peaks` executable for detecting peaks (aka components)
+in protein profile data is available after package installation. 
+
+It expects at least two tab-separated (tsv) input files with the following 
+structure:
 
 **File 1:**  Protein abundance values
 
@@ -53,16 +49,54 @@ number of parallel workers, specify the output file names, a protein whitelist
 and more. 
 Run `complex_find_peaks --help` to see all options.
 
+### Notebook
+
+The `MitCOM.ipynb` notebook exemplifies the way from data import to t-SNE 
+output. It requires the `mitcom` package to be installed.
+
+#### Data files loaded from notebook
+  - *protein_abundance_file*: 
+    Protein abundances (see above)
+
+  - *components_file*: 
+    Component output file from peak detection script
+ 
+  - *protein_whitelist_file*:
+    Text file containing whitelisted proteins (optional)
+
+  - *predefined_complexes_file*: 
+    Two-column text file (tsv). Can be used to define *known* 
+    complexes by mapping component identifiers to arbitrary complex names. 
+    This mapping is only used during t-SNE visualization. Data points belonging 
+    to the same complex will be plotted as one individual trace that can be 
+    shown/hidden by clicking on its associated legend item.
+    _Note:_ The file is expected to exist and contain at least the header row.  
+
+    Example:
+    ```
+    component    complex
+    ATPA_P6      ATP#1
+    ATPB_P6      ATP#1
+    ATPD_P3      ATP#1
+    SDH3_P8      SDH
+    SDHA_P8      SDH
+    SDHB_P9      SDH
+    ...          ...
+    ```
+    
+
 ## Installation
 
 ### Standard
 
 ```bash
-# with pip (consider to run this in a virtual environment)
-pip install git+https://github.com/phys2/complexomics-mitcom.git
+# optional: create and activate virtual environment
+python -m venv .venv && .venv/Scripts/activate
 
-# with poetry
-poetry install git+https://github.com/phys2/complexomics-mitcom.git
+# optional: install wheels to speed up installations
+pip install wheels
+
+pip install git+https://github.com/phys2/complexomics-mitcom.git@main
 ```
 
 ### With Jupyter notebook support
@@ -72,11 +106,10 @@ for running the Jupyter notebook, namely *jupyter*, *jupyterlab* and *plotly*.
 To have these included, run these commands instead:
 
 ```bash
-# with pip
-pip install "git+https://github.com/phys2/complexomics-mitcom.git#egg=complexomics-mitcom[notebook]"
+pip install "git+https://github.com/phys2/complexomics-mitcom.git@main#egg=complexomics-mitcom[notebook]"
 
-# with poetry
-poetry install --extras notebook git+https://github.com/phys2/complexomics-mitcom.git
+# download MitCOM notebook
+curl -L -O https://github.com/phys2/complexomics-mitcom/raw/main/mitcom/notebooks/MitCOM.ipynb
 ```
 
 
