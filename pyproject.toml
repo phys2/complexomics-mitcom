@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "complexomics-mitcom"
-version = "1.0.0"
+version = "1.0.2"
 description = "MitCOM: methods to identify protein assemblies in protein profiles"
 authors = ["Alexander Haupt <alexander.haupt@physiologie.uni-freiburg.de>"]
 license = "MIT"
